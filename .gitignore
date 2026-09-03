@@ -24,8 +24,8 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# This build: notes and QA never ship.
-README.md
+# This build: notes and QA never ship. README.md is the short public one.
+NOTES.md
 qa/
 peek/
 *.py
