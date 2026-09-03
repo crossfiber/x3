@@ -41,16 +41,23 @@
 
   --nav-h:74px;
   --nav-h-sm:60px;
+  /* page gutter. every full-bleed element is a negative margin of exactly this,
+     never a viewport unit, so it can never outrun the layout width. */
+  --pad:32px;
+  --edge-l:calc(var(--pad) + env(safe-area-inset-left));
+  --edge-r:calc(var(--pad) + env(safe-area-inset-right));
   /* distance from a .wrap content edge out to the viewport edge, so a plate can
      bleed exactly to the edge instead of overshooting and cropping the subject */
+  /* desktop only: the asymmetric photo bleed. every mobile bleed uses --edge-l/r
+     instead, because 100vw exceeds the layout width wherever a scrollbar is reserved. */
   --bleed:calc((100vw - min(100vw, 1280px)) / 2 + 32px);
   --disp:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
   --body:'Source Serif 4',Georgia,'Times New Roman',serif;
   --wrap:1280px;
 }
 *{box-sizing:border-box}
-html{scroll-padding-top:calc(var(--nav-h) + 20px);-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--coal);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;font-weight:400;overflow-x:hidden}
+html{scroll-padding-top:calc(var(--nav-h) + 20px);-webkit-text-size-adjust:100%;overflow-x:clip}
+body{margin:0;background:var(--coal);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;font-weight:400;overflow-x:clip}
 img{max-width:100%;display:block}
 a{color:inherit}
 
@@ -60,7 +67,7 @@ a{color:inherit}
 :focus-visible{outline:3px solid var(--red);outline-offset:3px}
 .on-dark :focus-visible,.on-dark:focus-visible{outline-color:var(--teal)}
 
-.wrap{max-width:var(--wrap);margin:0 auto;padding:0 32px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding-left:var(--edge-l);padding-right:var(--edge-r)}
 h1,h2,h3,h4{font-family:var(--disp);font-weight:900;line-height:1.04;letter-spacing:-.012em;margin:0;text-transform:uppercase}
 h1{font-size:clamp(2.15rem,3.85vw,3.3rem)}
 h2{font-size:clamp(1.9rem,3.5vw,2.95rem)}
@@ -92,8 +99,8 @@ strong,b{font-weight:600}
 
 /* NAV: solid from load */
 .nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--coal);border-bottom:1px solid var(--edge);z-index:900}
-.nav-in{max-width:var(--wrap);margin:0 auto;padding:0 32px;height:100%;display:flex;align-items:center;gap:26px}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0}
+.nav-in{max-width:var(--wrap);margin:0 auto;padding-left:var(--edge-l);padding-right:var(--edge-r);height:100%;display:flex;align-items:center;gap:26px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;min-width:0;flex:0 1 auto;overflow:hidden}
 .brand img{height:28px;width:auto}
 .brand .div{width:1px;height:24px;background:var(--edge)}
 .brand .gm{font-family:var(--disp);font-weight:800;font-size:1.04rem;text-transform:uppercase;letter-spacing:.19em;color:#fff;line-height:1;padding-top:2px}
@@ -104,7 +111,10 @@ strong,b{font-weight:600}
 .nav-tel{font-family:var(--disp);font-size:.88rem;letter-spacing:.02em;font-weight:500;text-decoration:none;color:#fff;white-space:nowrap}
 .nav-tel:hover{color:var(--red-lit)}
 .nav .btn{padding:11px 22px;font-size:.88rem;min-height:44px}
-.hamburger{display:none;background:none;border:0;padding:10px;cursor:pointer;margin-left:auto;color:#fff;font-size:1.35rem;min-width:48px;min-height:48px}
+.hamburger{display:none;flex-shrink:0;background:none;border:0;padding:10px;cursor:pointer;margin-left:auto;color:#fff;font-size:1.35rem;min-width:48px;min-height:48px}
+.nav-call{display:none;flex-shrink:0;align-items:center;justify-content:center;min-width:48px;min-height:48px;color:#fff;font-size:1.06rem;text-decoration:none;border:1px solid var(--edge);border-radius:999px}
+.nav-call:hover{border-color:var(--red);color:var(--red-lit)}
+.rail-hint{display:none}
 
 /* DRAWER */
 .overlay{position:fixed;inset:0;background:rgba(10,9,9,.68);opacity:0;pointer-events:none;transition:opacity .25s;z-index:940}
@@ -250,6 +260,14 @@ main{display:block}
 .who{max-width:920px}
 .who h2{margin-bottom:40px}
 .qa{padding:28px 0;border-top:1px solid var(--edge)}
+.qa summary{list-style:none;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.qa summary::-webkit-details-marker{display:none}
+.qa-chev{display:none;color:var(--red-lit);font-size:.9rem;flex-shrink:0;padding-top:6px;transition:transform .22s}
+.qa[open] .qa-chev{transform:rotate(180deg)}
+details.fold>summary{list-style:none;display:block;position:relative}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary .qa-chev{display:none;position:absolute;top:2px;right:0}
+details.fold[open]>summary .qa-chev{transform:rotate(180deg)}
 .qa:last-of-type{border-bottom:1px solid var(--edge)}
 .qa h3{font-family:var(--disp);font-weight:800;font-size:clamp(1.18rem,1.8vw,1.42rem);text-transform:none;letter-spacing:0;margin-bottom:11px;color:#fff;line-height:1.2}
 .qa p{margin:0;font-size:1.02rem;color:#BDB5B3;max-width:70ch}
@@ -371,7 +389,8 @@ main{display:block}
 }
 @media (max-width:980px){
   .nav-links,.nav-right{display:none}
-  .hamburger{display:block}
+  .nav-call{display:inline-flex;margin-left:auto}
+  .hamburger{display:block;margin-left:6px}
   /* mobile hero is ordered as its own design: conversion path first, then the
      photograph, then the signature card. display:contents lifts the copy's
      children into the grid so order applies across the whole hero. */
@@ -382,14 +401,14 @@ main{display:block}
   .hero-sub{order:3}
   .hero-cta{order:4}
   .hero-by{order:5}
-  .hero-media{order:6;min-height:0;height:auto;aspect-ratio:3/2;margin-top:34px;margin-left:0}
-  .hero-media .plate{position:relative;inset:auto;left:auto;right:auto;width:100vw;margin-left:calc(-50vw + 50%);height:100%}
+  .hero-media{order:6;min-height:0;height:auto;aspect-ratio:3/2;margin-top:34px;margin-left:calc(-1 * var(--edge-l));margin-right:calc(-1 * var(--edge-r));width:auto}
+  .hero-media .plate{position:absolute;inset:0;left:0;right:0;width:auto;margin:0;height:auto}
   .hero-media .plate img{object-position:58% 50%}
   .hero-media::after{left:0;right:0;background:linear-gradient(180deg,rgba(22,20,20,.28) 0%,rgba(22,20,20,0) 40%)}
   .card{order:7;margin-top:-52px;margin-left:0;max-width:none}
   .hour-grid{grid-template-columns:1fr}
-  .hour-media{aspect-ratio:3/2;margin-left:0}
-  .hour-media .plate{position:relative;inset:auto;width:100vw;margin-left:calc(-50vw + 50%);height:100%}
+  .hour-media{aspect-ratio:3/2;margin-left:calc(-1 * var(--edge-l));margin-right:calc(-1 * var(--edge-r));width:auto}
+  .hour-media .plate{position:absolute;inset:0;width:auto;margin:0;height:auto}
   .hour-media .plate img{object-position:40% 50%}
   .hour-body{padding:52px 0 64px}
   .coach-grid{grid-template-columns:1fr;gap:32px}
@@ -405,16 +424,19 @@ main{display:block}
   .part-ask{grid-template-columns:1fr;gap:24px}
 }
 @media (max-width:720px){
-  :root{--nav-h:var(--nav-h-sm);--bleed:calc((100vw - min(100vw, 1280px)) / 2 + 20px)}
+  :root{--nav-h:var(--nav-h-sm);--pad:20px}
   html{scroll-padding-top:calc(var(--nav-h-sm) + 16px)}
   body{font-size:16px}
   h1{font-size:2.05rem}
   h2{font-size:1.78rem}
   h3{font-size:1.08rem}
   .lede{font-size:1.02rem}
-  .wrap{padding:0 20px}
-  .nav-in{padding:0 20px}
 
+  .nav-in{gap:8px}
+  .brand{gap:9px}
+  .brand img{height:24px}
+  .brand .div{height:19px}
+  .brand .gm{font-size:.9rem;letter-spacing:.13em}
   .hero-grid{padding-top:34px}
   .hero-sub{font-size:1.04rem;margin-bottom:26px}
   .hero-cta{margin-bottom:26px;gap:10px}
@@ -424,8 +446,8 @@ main{display:block}
   .card-head{padding:13px 16px}
   .card-title{font-size:.98rem}
   .card-meta{font-size:.58rem}
-  .sc .grp th{padding:9px 13px;font-size:.66rem}
-  .sc .lab{padding:10px 13px;font-size:.9rem}
+  .sc .grp th{padding:8px 12px;font-size:.66rem}
+  .sc .lab{padding:8px 12px;font-size:.9rem}
   .sc .box{width:82px}
   .sc .unit{width:44px}
   .card-foot{font-size:.85rem;padding:13px 15px 14px}
@@ -437,6 +459,13 @@ main{display:block}
   .fsrc{margin-top:20px}
 
   .s-method{padding:48px 0 46px}
+  .spine{display:none}
+  details.fold>summary{cursor:pointer;padding-right:30px;min-height:48px}
+  details.fold>summary .qa-chev{display:block;color:var(--red-deep);font-size:.9rem;top:6px}
+  .pl>summary .qa-chev{color:var(--red-lit)}
+  .col ul,.col .col-own{margin-top:14px}
+  .pl>summary{padding-bottom:2px}
+  .pl ul{margin-top:12px}
   .m-head{margin-bottom:28px}
   .col{padding:22px 20px 20px}
   .col-h{font-size:1.5rem}
@@ -448,7 +477,7 @@ main{display:block}
 
   .hour-body{padding:34px 0 44px}
   .hour-lede{margin-bottom:26px}
-  .steps li{grid-template-columns:50px 1fr;gap:14px;padding:16px 0}
+  .steps li{grid-template-columns:46px 1fr;gap:12px;padding:13px 0}
   .steps .t{font-size:1.24rem}
   .steps p{font-size:.94rem}
   .hour-out{margin-top:22px;padding:16px 18px;font-size:.95rem}
@@ -462,6 +491,12 @@ main{display:block}
   .creds li span{font-size:.63rem;margin-top:6px}
 
   .s-who{padding:44px 0}
+  .qa{padding:0}
+  .qa summary{cursor:pointer;padding:16px 0;min-height:48px;align-items:center}
+  .qa summary h3{margin:0}
+  .qa .qa-chev{display:block;padding-top:0}
+  .qa p{padding-bottom:18px}
+  .foot-contact{display:none}
   .who h2{margin-bottom:24px}
   .qa{padding:20px 0}
   .qa p{font-size:.97rem}
@@ -488,9 +523,8 @@ main{display:block}
   .s-part{padding:46px 0}
   .part-lede{margin-bottom:24px}
   /* three plates become a swipe rail: one screen instead of three, nothing hidden */
-  .stack{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;margin:0 -20px;padding:2px 20px 6px;background:none;border:0}
-  .stack::-webkit-scrollbar{display:none}
-  .pl{flex:0 0 84%;scroll-snap-align:center;padding:24px 20px 20px;border:1px solid var(--edge)}
+  .stack{grid-template-columns:1fr;gap:1px}
+  .pl{padding:20px 20px 18px}
   .pl-n{font-size:2.1rem}
   .pl li{font-size:.92rem;padding:9px 0}
   .part-ask{margin-top:28px;padding:24px 22px;gap:20px}
@@ -505,8 +539,8 @@ main{display:block}
   .field textarea{min-height:96px}
   .info-row{padding:13px 0}
 
-  .foot{padding-top:42px}
-  .foot-grid{gap:26px;padding-bottom:28px}
+  .foot{padding-top:34px}
+  .foot-grid{gap:20px;padding-bottom:22px}
   .foot-bot{flex-direction:column;align-items:flex-start;gap:14px}
   .disclaim{padding:22px 0;font-size:.79rem}
 }
@@ -536,6 +570,7 @@ main{display:block}
       <a class="nav-tel" href="tel:+12396728143">239.672.8143</a>
       <a class="btn btn-primary" href="#contact" data-want="Book a first session">Book a first session</a>
     </div>
+    <a class="nav-call" href="tel:+12396728143" aria-label="Call Ryan Hogan on 239.672.8143"><i class="fa-solid fa-phone" aria-hidden="true"></i></a>
     <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
   </div>
 </header>
@@ -601,7 +636,7 @@ main{display:block}
 
     <div class="hero-media">
       <div class="plate">
-        <img src="assets/ryan-followthrough-monitor-hero.jpg" width="1920" height="1280" fetchpriority="high" alt="Ryan Hogan finishing a driver swing with a launch monitor set up behind the ball on a Fort Myers range">
+        <img src="assets/ryan-followthrough-monitor-hero.jpg" width="1100" height="733" fetchpriority="high" alt="Ryan Hogan finishing a driver swing with a launch monitor set up behind the ball on a Fort Myers range">
       </div>
     </div>
   </div>
@@ -637,9 +672,8 @@ main{display:block}
     </div>
 
     <div class="instr">
-      <div class="col">
-        <div class="col-h">The floor</div>
-        <div class="col-sub">Measured by X3, already in the building</div>
+      <details class="col fold">
+        <summary><div class="col-h">The floor</div><div class="col-sub">Measured by X3, already in the building</div><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
         <ul>
           <li><b>Peak vertical force</b><span>ForceDecks</span></li>
           <li><b>Rate of force development</b><span>ForceDecks</span></li>
@@ -648,9 +682,9 @@ main{display:block}
           <li><b>Movement screen</b><span>VALD analysis</span></li>
         </ul>
         <p class="col-own">The Sports Science Lab X3 already runs for its football, baseball and volleyball athletes. <b>The instruments do not care which sport walks in.</b></p>
-      </div>
+      </details>
 
-      <div class="spine" aria-hidden="true">
+            <div class="spine" aria-hidden="true">
         <div class="spine-h">the sequence</div>
         <div class="chain">
           <span class="node n1">ground</span>
@@ -667,9 +701,8 @@ main{display:block}
         </div>
       </div>
 
-      <div class="col col-flight">
-        <div class="col-h">The flight</div>
-        <div class="col-sub">Measured by the launch monitor</div>
+      <details class="col col-flight fold">
+        <summary><div class="col-h">The flight</div><div class="col-sub">Measured by the launch monitor</div><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
         <ul>
           <li><b>Clubhead speed</b><span>mph</span></li>
           <li><b>Ball speed</b><span>mph</span></li>
@@ -678,8 +711,9 @@ main{display:block}
           <li><b>Strike consistency</b><span>dispersion</span></li>
         </ul>
         <p class="col-own">The half a golfer already understands, because it is the half that shows up on the scorecard. <b>It is also the half that only tells you the result.</b></p>
-      </div>
-    </div>
+      </details>
+
+          </div>
 
     <div class="m-close">
       <p>Fort Myers has both instruments sitting in one building and nobody has pointed them at a golf swing yet. <b>Floor to Flight is what happens when you do.</b></p>
@@ -693,7 +727,7 @@ main{display:block}
   <div class="wrap hour-grid">
     <div class="hour-media">
       <div class="plate">
-        <img src="assets/ryan-swing-launch-monitor.webp" width="1800" height="1200" loading="lazy" alt="Ryan Hogan mid swing with the launch monitor and a scatter of balls in frame">
+        <img src="assets/ryan-swing-launch-monitor.webp" width="1000" height="667" loading="lazy" alt="Ryan Hogan mid swing with the launch monitor and a scatter of balls in frame">
       </div>
     </div>
 
@@ -739,7 +773,7 @@ main{display:block}
         </ul>
       </div>
       <div class="plate coach-photo">
-        <img src="assets/ryan-backswing-portrait.webp" width="1200" height="1800" loading="lazy" alt="Ryan Hogan at the top of his backswing on a Fort Myers practice tee">
+        <img src="assets/ryan-backswing-portrait.webp" width="760" height="1140" loading="lazy" alt="Ryan Hogan at the top of his backswing on a Fort Myers practice tee">
       </div>
     </div>
   </div>
@@ -749,18 +783,18 @@ main{display:block}
 <section class="dark s-who on-dark">
   <div class="wrap"><div class="who">
     <h2>Before you book</h2>
-    <div class="qa">
-      <h3>I am 62 and I am not trying to become an athlete. Is this for me?</h3>
+    <details class="qa">
+      <summary><h3>I am 62 and I am not trying to become an athlete. Is this for me?</h3><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
       <p>Yes, and the force plates matter more for you, not less. <b>Speed loss after 50 is usually a rate of force problem, not a flexibility problem</b>, and it is the thing a range lesson has no way to see. The strength work is scaled to what your body will actually tolerate, which is exactly what having a physical therapy team in the same building is for.</p>
-    </div>
-    <div class="qa">
-      <h3>I already have a coach I like. Am I supposed to leave him?</h3>
+    </details>
+    <details class="qa">
+      <summary><h3>I already have a coach I like. Am I supposed to leave him?</h3><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
       <p>No. Plenty of golfers here keep their swing coach and use this for the speed and body side. <b>Bring your coach's notes and we will work with them</b> rather than around them. If a change we make contradicts something he is teaching, you will hear that from us, out loud, in the session.</p>
-    </div>
-    <div class="qa">
-      <h3>What if I am currently hurt?</h3>
+    </details>
+    <details class="qa">
+      <summary><h3>What if I am currently hurt?</h3><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
       <p>Then say so when you book. X3 runs a full physical therapy practice on the same floor, and the honest answer some weeks is that you need Andrew's table before you need my launch monitor. <b>We will tell you which one you need.</b> A session sold to a golfer who should be in rehab is a session that costs us the next twelve.</p>
-    </div>
+    </details>
   </div></div>
 </section>
 
@@ -854,38 +888,35 @@ main{display:block}
     <p class="lede part-lede">Everything above this line is the golfer facing page. This part is the ask. It is here in the open because a partnership that needs a separate deck is a partnership that has something to hide.</p>
 
     <div class="stack">
-      <div class="pl">
-        <div class="pl-n">01</div>
-        <h3>The demographic is already in the parking lot</h3>
+      <details class="pl fold">
+        <summary><div class="pl-n">01</div><h3>The demographic is already in the parking lot</h3><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
         <ul>
           <li><b>152 golf establishments</b> across the Fort Myers and Naples metros, the densest per capita golf market in the country.</li>
           <li>Golfers buy <b>ongoing programming, not rehab episodes</b>. Retention is measured in seasons.</li>
           <li>Seasonal load fills <b>the snowbird months</b>, when youth academy volume is lowest.</li>
           <li>It uses the force plates, the turf and the weight room in <b>off peak hours</b>.</li>
         </ul>
-      </div>
+      </details>
 
-      <div class="pl">
-        <div class="pl-n">02</div>
-        <h3>A coach who already runs this hour</h3>
+      <details class="pl fold">
+        <summary><div class="pl-n">02</div><h3>A coach who already runs this hour</h3><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
         <ul>
           <li><b>TPI Level 1</b> certified, trained at the Sean Foley Performance Academy.</li>
           <li><b>7 years coaching, 100+ golfers</b> taken from first lesson to scratch.</li>
           <li>His own launch monitor, his own book of Southwest Florida golfers, and an active mini tour card.</li>
           <li>A method <b>already built around exactly the instruments X3 owns</b>, which is why this is a graft and not a startup.</li>
         </ul>
-      </div>
+      </details>
 
-      <div class="pl">
-        <div class="pl-n">03</div>
-        <h3>Space, instruments, and a number</h3>
+      <details class="pl fold">
+        <summary><div class="pl-n">03</div><h3>Space, instruments, and a number</h3><i class="fa-solid fa-chevron-down qa-chev" aria-hidden="true"></i></summary>
         <ul>
           <li>A <b>hitting lane or net</b> on the indoor turf, at agreed hours.</li>
           <li><b>Force plate access</b> for baseline and re-test, scheduled around athlete blocks.</li>
           <li>A <b>line on the academy calendar</b> and on the Fort Myers page.</li>
           <li>A revenue split. <b>That number is a conversation, not a proposal</b>, and it is the only blank left on this page.</li>
         </ul>
-      </div>
+      </details>
     </div>
 
     <div class="part-ask">
@@ -993,7 +1024,7 @@ main{display:block}
         </ul>
       </div>
 
-      <div>
+      <div class="foot-contact">
         <h4>Contact</h4>
         <address>
           Ryan Hogan<br>
@@ -1024,6 +1055,14 @@ main{display:block}
 if ('scrollRestoration' in history) { history.scrollRestoration = 'auto'; }
 (function(){
   if (window.location.hash) { history.replaceState(null, '', window.location.pathname); }
+
+  /* objections: collapsed on phones, always open above that */
+  var qaMq = window.matchMedia('(min-width:721px)');
+  function syncQA(){
+    document.querySelectorAll('details.qa, details.fold').forEach(function(d){ d.open = qaMq.matches; });
+  }
+  syncQA();
+  if (qaMq.addEventListener) qaMq.addEventListener('change', syncQA);
 
   /* drawer */
   var hamburger = document.getElementById('hamburger');
