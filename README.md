@@ -25,19 +25,41 @@ The surface is a golfer facing booking page. The last two sections before contac
 the pitch to X3 itself, deep linkable at `#partnership` so a decision maker can be sent
 straight to the ask.
 
+## Type
+
+- **Display: Archivo**, weights 500 to 900. A wide American grotesk rather than a
+  condensed poster face. The Bebas / Oswald / Saira Condensed family is what every
+  generated "athletic" page reaches for first, so it is deliberately not used here.
+- **Body: Source Serif 4.** A text serif on a sports page is the unusual choice, and
+  that is the point. It also suits the actual buyer, who is more often a 55 year old
+  member at a Fort Myers club than a 22 year old athlete.
+- **No monospace anywhere.** An earlier revision set the data in IBM Plex Mono with
+  dotted leaders. That is the terminal look, it is one of the most recognisable
+  generated-design tells, and a golf coach is not a terminal.
+
+Google Fonts request, verified 200 with every face present:
+
+`https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap`
+
+## The signature element
+
+The baseline card is built as a **golf scorecard**: paper laid on the dark page, a red
+header strip, ruled cells, blanks that read as pencil fillable, and a total row at the
+bottom carrying the only number printed in advance. It is a real `<table>`, because it
+is real tabular data. Every golfer already knows this object, which is why it cannot
+read as generated.
+
 ## Visual direction
 
-Dark dominant, athletic, photography at full scale. Saira Condensed 800 for display,
-Jost for body, IBM Plex Mono confined to actual data values. X3 red as a real accent
-rather than a tint. Every colour traced to X3's own stylesheet.
-
-Section grounds alternate deliberately: dark hero, full bleed facility band, light
-method, dark hour, light coach, dark objections, light programs, darker roster,
-dark partnership, light contact, dark footer.
+Dark dominant, athletic, photography at full scale. X3 red as a real accent rather than
+a tint. Every colour traced to X3's own stylesheet. Section grounds alternate
+deliberately: dark hero, full bleed facility band, light method, dark hour, light coach,
+dark objections, light programs, darker roster, dark partnership, light contact,
+dark footer.
 
 ## Measured, not assumed
 
-Headless Chromium at 390x844 and 1440x900:
+Headless Chromium at 390x844 and 1440x900. Screenshots viewed, not inferred from source.
 
 | Check | Mobile 390 | Desktop 1440 |
 |---|---|---|
@@ -47,9 +69,9 @@ Headless Chromium at 390x844 and 1440x900:
 | Uppercase micro-labels | 4 | 4 |
 | Non-pressable pills | 0 | 0 |
 | Console errors | 0 | 0 |
-| Swipes, hero to footer | 14.4 | 11.5 |
+| Swipes, hero to footer | 15.1 | 11.8 |
 
-The 14.4 mobile swipe count is above the 8 to 10 target and is a known, accepted
+The 15.1 mobile swipe count is above the 8 to 10 target and is a known, accepted
 overrun. Eleven sections carry load bearing argument and none is padding. Getting to 10
 would mean deleting parts of the pitch. Flagged here rather than hidden.
 
